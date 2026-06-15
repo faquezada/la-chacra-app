@@ -308,36 +308,34 @@ function updateBadge(id,n){
 function listenNotifs(){
   if(!userProfile)return;
   var rt=getRolTipo(userProfile.rol);
-  var estadoEspera={qc1:"ejecutado",qc2:"qc1"};
-  var miEstado=estadoEspera[rt];
-
   db.collection("modulos").where("activo","==",true).onSnapshot(function(snap){
-    var countPartidas=0,countModulo=0;
+    var count=0;
     snap.docs.forEach(function(d){
       var m=d.data();
-      var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
+      if(!m.tipo)m.tipo=d.id.endsWith("M1")?"seco":"humedo";
+      if(!m.estadoModulo)m.estadoModulo="fabricacion";
+      var partidas=(m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO).filter(function(p){return!p.sub;});
       var estados=m.estados||{};
-      if(rt==="supervisor"){
+      var todasAp=partidas.every(function(p){return estados[p.code]==="aprobado";});
+      if(rt==="admin"){
         partidas.forEach(function(p){
-          if(!p.sub&&estados[p.code]==="rechazado")countPartidas++;
+          var est=estados[p.code]||"en_ejecucion";
+          if(["ejecutado","qc1","rechazado"].indexOf(est)>=0)count++;
         });
-        if((m.estadoModulo==="r1")&&m.r1Observaciones)countModulo++;
-      } else if(miEstado){
-        partidas.forEach(function(p){
-          if(!p.sub&&estados[p.code]===miEstado)countPartidas++;
-        });
-      } else if(rt==="qc2"||rt==="admin"){
-        if(m.estadoModulo==="fabricacion"){
-          var todas=partidas.filter(function(p){return!p.sub;});
-          var todasQC2=todas.every(function(p){return estados[p.code]==="aprobado";});
-          if(todasQC2)countModulo++;
-        }
-        if(m.estadoModulo==="rf")countModulo++;
+        if(todasAp&&m.estadoModulo==="fabricacion")count++;
+        if(m.estadoModulo==="r1"||m.estadoModulo==="rf")count++;
+      } else if(rt==="supervisor"){
+        partidas.forEach(function(p){if(estados[p.code]==="rechazado")count++;});
+        if(m.estadoModulo==="r1"&&m.r1Observaciones)count++;
+      } else if(rt==="qc1"){
+        partidas.forEach(function(p){if(estados[p.code]==="ejecutado")count++;});
+      } else if(rt==="qc2"){
+        partidas.forEach(function(p){if(estados[p.code]==="qc1")count++;});
+        if(todasAp&&m.estadoModulo==="fabricacion")count++;
+        if(m.estadoModulo==="rf")count++;
       }
     });
-    var total=countPartidas+countModulo;
-    updateBadge("revisar",total);
-    updateBadge("modulos",0);
+    updateBadge("revisar",count);
   });
 }
 
@@ -416,7 +414,13 @@ function renderTab(){
 function renderModulos(){
   activeListeners.forEach(function(u){if(u)u();});activeListeners=[];
   var unsub=db.collection("modulos").where("activo","==",true).onSnapshot(function(snap){
-    var modulos=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+    var modulos=snap.docs.map(function(d){
+      var data=d.data();
+      if(!data.nombre)data.nombre=d.id;
+      if(!data.tipo)data.tipo=d.id.endsWith("M1")?"seco":"humedo";
+      if(!data.estadoModulo)data.estadoModulo="fabricacion";
+      return Object.assign({id:d.id},data);
+    });
     modulos.sort(function(a,b){return(a.orden||999)-(b.orden||999);});
     var c=document.getElementById("main-content");if(!c)return;
 
@@ -817,7 +821,13 @@ function renderReportes(){
   var filtroTipo="todos";
   var unsub=db.collection("modulos").where("activo","==",true).onSnapshot(function(snap){
     var c=document.getElementById("main-content");if(!c)return;
-    var modulos=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+    var modulos=snap.docs.map(function(d){
+      var data=d.data();
+      if(!data.nombre)data.nombre=d.id;
+      if(!data.tipo)data.tipo=d.id.endsWith("M1")?"seco":"humedo";
+      if(!data.estadoModulo)data.estadoModulo="fabricacion";
+      return Object.assign({id:d.id},data);
+    });
 
     // Counters por etapa
     var contadores={en_ejecucion:0,ejecutado:0,qc1:0,qc2:0,aprobado:0,rechazado:0};
