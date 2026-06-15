@@ -8,12 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
-:root {
-  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;
-  --accent:#f0a500;--accent2:#3b82f6;--danger:#ef4444;--success:#22c55e;
-  --warning:#f59e0b;--text:#e8eaf0;--text2:#8b90a7;--seco:#3b82f6;--humedo:#8b5cf6;
-  --radius:10px;
-}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--accent:#f0a500;--accent2:#3b82f6;--danger:#ef4444;--success:#22c55e;--warning:#f59e0b;--text:#e8eaf0;--text2:#8b90a7;--seco:#3b82f6;--humedo:#8b5cf6;--radius:10px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh;font-size:14px;}
 #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
@@ -31,6 +26,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min
 .btn-approve{background:var(--success);color:#000;}
 .btn-reject{background:var(--danger);color:#fff;}
 .btn-submit{background:var(--accent);color:#000;}
+.btn-primary{background:var(--accent2);color:#fff;}
 .err{color:var(--danger);font-size:12px;margin-top:10px;text-align:center;}
 #app{display:none;flex-direction:column;min-height:100vh;}
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
@@ -39,69 +35,90 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min
 .role-supervisor{color:var(--accent);}
 .role-qc1{color:var(--accent2);}
 .role-qc2{color:var(--humedo);}
-.role-fto{color:var(--success);}
 .role-gerente{color:var(--warning);}
 .role-admin{color:var(--danger);}
 .nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
-.nav-tab{padding:12px 18px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.nav-tab{padding:12px 16px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;position:relative;}
 .nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.main{flex:1;padding:16px;max-width:900px;margin:0 auto;width:100%;}
+.notif-badge{position:absolute;top:7px;right:4px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;border-radius:99px;padding:1px 5px;min-width:16px;text-align:center;line-height:14px;}
+.main{flex:1;padding:16px;max-width:960px;margin:0 auto;width:100%;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
-.badge{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:3px 8px;border-radius:4px;}
+.badge{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px;display:inline-block;}
 .badge-seco{background:rgba(59,130,246,0.18);color:var(--seco);}
 .badge-humedo{background:rgba(139,92,246,0.18);color:var(--humedo);}
-.badge-pendiente{background:rgba(139,144,167,0.15);color:var(--text2);}
+.badge-en_ejecucion{background:rgba(139,144,167,0.12);color:var(--text2);}
 .badge-ejecutado{background:rgba(245,158,11,0.18);color:var(--warning);}
 .badge-qc1{background:rgba(59,130,246,0.18);color:var(--accent2);}
 .badge-qc2{background:rgba(139,92,246,0.18);color:var(--humedo);}
-.badge-fto{background:rgba(34,197,94,0.12);color:var(--success);}
 .badge-aprobado{background:rgba(34,197,94,0.18);color:var(--success);}
-.badge-observacion{background:rgba(239,68,68,0.18);color:var(--danger);}
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:16px;}
-.stat-box{background:var(--surface2);border-radius:var(--radius);padding:14px 12px;text-align:center;}
-.stat-num{font-size:26px;font-weight:800;color:var(--accent);line-height:1;}
-.stat-label{font-size:10px;color:var(--text2);margin-top:4px;text-transform:uppercase;}
+.badge-rechazado{background:rgba(239,68,68,0.18);color:var(--danger);}
+.badge-r1{background:rgba(251,146,60,0.2);color:#fb923c;}
+.badge-rf{background:rgba(34,197,94,0.12);color:#4ade80;}
+.badge-entregado{background:rgba(34,197,94,0.25);color:var(--success);}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:10px;margin-bottom:16px;}
+.stat-box{background:var(--surface2);border-radius:var(--radius);padding:14px 10px;text-align:center;}
+.stat-num{font-size:22px;font-weight:800;color:var(--accent);line-height:1;}
+.stat-label{font-size:9px;color:var(--text2);margin-top:4px;text-transform:uppercase;letter-spacing:0.3px;}
 .progress-wrap{background:var(--surface2);border-radius:99px;height:6px;overflow:hidden;margin-top:8px;}
-.progress-bar{height:100%;border-radius:99px;background:var(--accent);}
-.module-item{background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:8px;cursor:pointer;border:1px solid transparent;}
+.progress-bar{height:100%;border-radius:99px;background:var(--accent);transition:width 0.3s;}
+.module-item{background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:8px;cursor:pointer;border:1px solid transparent;transition:border 0.2s;}
 .module-item:hover{border-color:var(--border);}
-.module-row{display:flex;align-items:center;justify-content:space-between;}
+.module-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
 .module-name{font-size:13px;font-weight:700;}
-.module-meta{font-size:11px;color:var(--text2);margin-top:3px;}
-.partida-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;margin-bottom:6px;background:var(--bg);border:1px solid var(--border);}
-.partida-left{flex:1;}
+.module-meta{font-size:11px;color:var(--text2);margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.partida-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;margin-bottom:5px;background:var(--bg);border:1px solid var(--border);}
+.partida-item.rechazado-bg{border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.04);}
+.partida-left{flex:1;min-width:0;}
 .partida-code{font-size:10px;color:var(--text2);font-family:monospace;}
 .partida-name{font-size:12px;font-weight:600;margin-top:1px;}
+.partida-obs{font-size:10px;color:var(--danger);margin-top:2px;}
 .partida-time{font-size:10px;color:var(--text2);margin-top:2px;}
-.partida-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;margin-left:8px;}
+.partida-actions{display:flex;gap:5px;align-items:center;flex-shrink:0;margin-left:8px;flex-wrap:wrap;justify-content:flex-end;}
+.flow-bar{display:flex;gap:3px;margin-top:5px;align-items:center;flex-wrap:wrap;}
+.flow-step{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+.flow-step.fs-done{background:rgba(34,197,94,0.15);color:var(--success);border-color:rgba(34,197,94,0.2);}
+.flow-step.fs-active{background:var(--accent);color:#000;border-color:var(--accent);}
+.flow-step.fs-rejected{background:rgba(239,68,68,0.15);color:var(--danger);border-color:rgba(239,68,68,0.2);}
+.flow-arrow{color:var(--border);font-size:9px;}
 .filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.filter-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;}
+.filter-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s;}
 .filter-btn.active{background:var(--accent);color:#000;border-color:var(--accent);}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
-.modal{background:var(--surface);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:24px 20px;border:1px solid var(--border);}
-.modal-title{font-size:15px;font-weight:700;margin-bottom:4px;}
-.modal-sub{font-size:12px;color:var(--text2);margin-bottom:20px;}
-.modal-close{float:right;cursor:pointer;color:var(--text2);font-size:24px;line-height:1;background:none;border:none;color:var(--text2);}
-textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;min-height:80px;font-family:inherit;outline:none;}
-.section-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:16px;}
-.empty{text-align:center;padding:48px 24px;color:var(--text2);}
-.empty-icon{font-size:36px;margin-bottom:12px;}
-.empty-text{font-size:14px;font-weight:600;margin-bottom:4px;color:var(--text);}
-.dash-section{margin-bottom:24px;}
-.dash-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
-.cuello-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;margin-bottom:6px;}
-.cuello-count{font-size:18px;font-weight:800;color:var(--danger);min-width:32px;text-align:right;}
-.timeline{padding-left:16px;border-left:2px solid var(--border);margin-top:8px;}
-.timeline-item{position:relative;padding:0 0 14px 16px;}
-.timeline-dot{position:absolute;left:-21px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--border);}
-.timeline-dot.done{background:var(--success);}
-.timeline-dot.pending{background:var(--warning);}
-.timeline-dot.rejected{background:var(--danger);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+.modal{background:var(--surface);border-radius:16px 16px 0 0;width:100%;max-width:660px;max-height:90vh;overflow-y:auto;padding:24px 18px 32px;border:1px solid var(--border);}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.modal-close{float:right;cursor:pointer;font-size:26px;line-height:1;background:none;border:none;color:var(--text2);margin-left:8px;}
+textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;min-height:90px;font-family:inherit;outline:none;margin-top:8px;}
+.section-label{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.empty{text-align:center;padding:56px 24px;color:var(--text2);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-text{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--text);}
+.tiempo-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:var(--success);border-radius:99px;padding:3px 10px;font-size:10px;font-weight:700;}
+.modulo-estado-bar{display:flex;gap:6px;align-items:center;margin:10px 0;flex-wrap:wrap;}
+.mes-step{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;border:1px solid var(--border);color:var(--text2);}
+.mes-step.mes-done{background:rgba(34,197,94,0.15);color:var(--success);border-color:rgba(34,197,94,0.2);}
+.mes-step.mes-active{background:var(--accent);color:#000;border-color:var(--accent);}
+.mes-step.mes-pending{background:var(--surface2);}
+/* GERENTE */
+.reporte-section{margin-bottom:28px;}
+.reporte-title{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.reporte-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-radius:8px;margin-bottom:6px;}
+.reporte-label{font-size:12px;font-weight:600;}
+.reporte-val{font-size:18px;font-weight:800;}
+.etapa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:8px;}
+.etapa-box{background:var(--surface2);border-radius:var(--radius);padding:12px;text-align:center;border:1px solid var(--border);}
+.etapa-num{font-size:20px;font-weight:800;line-height:1;}
+.etapa-label{font-size:10px;color:var(--text2);margin-top:3px;text-transform:uppercase;}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
 input[type=text],input[type=email],input[type=password]{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:10px 12px;font-size:13px;outline:none;}
 select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-size:12px;outline:none;}
 @media(min-width:600px){.modal{border-radius:16px;margin:20px;}.modal-overlay{align-items:center;}}
+.notif-panel{background:var(--surface2);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--accent);}
+.notif-panel.notif-danger{border-left-color:var(--danger);}
+.notif-panel.notif-success{border-left-color:var(--success);}
+.notif-text{font-size:12px;font-weight:600;}
+.notif-sub{font-size:11px;color:var(--text2);margin-top:2px;}
 </style>
 </head>
 <body>
@@ -125,7 +142,7 @@ select{background:var(--bg);border:1px solid var(--border);color:var(--text);pad
       <span class="topbar-role" id="topbar-role"></span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:12px;color:var(--text2)" id="topbar-user"></span>
+      <span style="font-size:11px;color:var(--text2)" id="topbar-user"></span>
       <button class="btn-sec" id="btn-logout">Salir</button>
     </div>
   </div>
@@ -139,34 +156,42 @@ select{background:var(--bg);border:1px solid var(--border);color:var(--text);pad
 
 <script>
 firebase.initializeApp({
-  apiKey: "AIzaSyAhmzoBiazImQ7TwpBVU49DIHeqJoJHJ9Q",
-  authDomain: "la-chacra-382e5.firebaseapp.com",
-  projectId: "la-chacra-382e5",
-  storageBucket: "la-chacra-382e5.firebasestorage.app",
-  messagingSenderId: "607686952496",
-  appId: "1:607686952496:web:902bd60f0bb1f4917a4ff5"
+  apiKey:"AIzaSyAhmzoBiazImQ7TwpBVU49DIHeqJoJHJ9Q",
+  authDomain:"la-chacra-382e5.firebaseapp.com",
+  projectId:"la-chacra-382e5",
+  storageBucket:"la-chacra-382e5.firebasestorage.app",
+  messagingSenderId:"607686952496",
+  appId:"1:607686952496:web:902bd60f0bb1f4917a4ff5"
 });
-var auth = firebase.auth();
-var db = firebase.firestore();
+var auth=firebase.auth();
+var db=firebase.firestore();
 
-var ROLES = {
-  supervisor_corte:{label:"Supervisor · Corte",color:"role-supervisor"},
-  supervisor_obra_gruesa:{label:"Supervisor · Obra Gruesa",color:"role-supervisor"},
-  supervisor_terminaciones:{label:"Supervisor · Terminaciones",color:"role-supervisor"},
-  supervisor_recepcion:{label:"Supervisor · Recepción",color:"role-supervisor"},
-  qc1:{label:"Control QC1",color:"role-qc1"},
-  qc2:{label:"Control QC2",color:"role-qc2"},
-  fto:{label:"Fiscalizador FTO",color:"role-fto"},
-  gerente:{label:"Gerente de Planta",color:"role-gerente"},
-  admin:{label:"Administrador",color:"role-admin"},
+// ── CONSTANTES ────────────────────────────────────────────────────────────────
+// Flujo de partidas
+var FLUJO_PARTIDA=["en_ejecucion","ejecutado","qc1","qc2","aprobado"];
+var SIGUIENTE_PARTIDA={en_ejecucion:"ejecutado",ejecutado:"qc1",qc1:"qc2",qc2:"aprobado"};
+var ANTERIOR_PARTIDA={ejecutado:"en_ejecucion",qc1:"en_ejecucion",qc2:"ejecutado",aprobado:"qc2"};
+
+// Flujo de módulo (nivel superior, cuando todas las partidas están aprobadas en QC2)
+var FLUJO_MODULO=["fabricacion","r1","rf","entregado"];
+var SIGUIENTE_MODULO={fabricacion:"r1",r1:"rf",rf:"entregado"};
+var ANTERIOR_MODULO={r1:"fabricacion",rf:"r1",entregado:"rf"};
+
+var ESTADO_P_LABELS={en_ejecucion:"En Ejecución",ejecutado:"Ejecutado",qc1:"En QC1",qc2:"En QC2",aprobado:"Aprobado QC2",rechazado:"Rechazado"};
+var ESTADO_M_LABELS={fabricacion:"Fabricación",r1:"R1 Emitido",rf:"Revisión Final",entregado:"Entregado"};
+
+var ROLES={
+  supervisor_corte:{label:"Supervisor · Corte",color:"role-supervisor",tipo:"supervisor"},
+  supervisor_obra_gruesa:{label:"Supervisor · Obra Gruesa",color:"role-supervisor",tipo:"supervisor"},
+  supervisor_terminaciones:{label:"Supervisor · Terminaciones",color:"role-supervisor",tipo:"supervisor"},
+  supervisor_recepcion:{label:"Supervisor · Recepción",color:"role-supervisor",tipo:"supervisor"},
+  qc1:{label:"Control QC1",color:"role-qc1",tipo:"qc1"},
+  qc2:{label:"Control QC2",color:"role-qc2",tipo:"qc2"},
+  gerente:{label:"Gerente de Planta",color:"role-gerente",tipo:"gerente"},
+  admin:{label:"Administrador",color:"role-admin",tipo:"admin"},
 };
 
-var ESTADO_LABELS = {
-  pendiente:"Pendiente",ejecutado:"Ejecutado",qc1:"En QC1",
-  qc2:"En QC2",fto:"En FTO",aprobado:"Aprobado",observacion:"Con Obs."
-};
-
-var PARTIDAS_SECO = [
+var PARTIDAS_SECO=[
   {code:"C.C.1.1.1",name:"Estructura Muros Exteriores",grupo:"obra_gruesa"},
   {code:"C.C.1.1.1.1",name:"Muros Ext. — Estructura y Plomos",grupo:"obra_gruesa",sub:true},
   {code:"C.C.1.1.1.2",name:"Muros Ext. — Aislación",grupo:"obra_gruesa",sub:true},
@@ -204,7 +229,7 @@ var PARTIDAS_SECO = [
   {code:"C.C.1.1.35",name:"Corrientes Débiles — Canalizaciones",grupo:"recepcion"},
 ];
 
-var PARTIDAS_HUMEDO = PARTIDAS_SECO.concat([
+var PARTIDAS_HUMEDO=PARTIDAS_SECO.concat([
   {code:"C.C.1.1.8",name:"Revestimiento Interior Zona Húmeda",grupo:"terminaciones"},
   {code:"C.C.1.1.9",name:"Puertas Acceso",grupo:"terminaciones"},
   {code:"C.C.1.1.10",name:"Puertas Logia y Baño",grupo:"terminaciones"},
@@ -229,49 +254,102 @@ var PARTIDAS_HUMEDO = PARTIDAS_SECO.concat([
   {code:"C.C.1.1.28",name:"Tablero Distribución Alumbrado",grupo:"recepcion"},
 ]);
 
-var currentUser = null;
-var userProfile = null;
-var activeTab = "modulos";
-var activeFilter = "todos";
-var activeListeners = [];
+var currentUser=null,userProfile=null,activeTab="modulos",activeFilter="todos",activeListeners=[];
 
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 function closeModal(){document.getElementById("modal").style.display="none";}
 function showModal(html){document.getElementById("modal-body").innerHTML=html;document.getElementById("modal").style.display="flex";}
 document.getElementById("modal").addEventListener("click",function(e){if(e.target===this)closeModal();});
 
-function canActOn(estado,role){
-  if(role==="admin"||role==="gerente")return true;
-  if((estado==="pendiente"||estado==="observacion")&&role.startsWith("supervisor"))return true;
-  if(estado==="ejecutado"&&role==="qc1")return true;
-  if(estado==="qc1"&&role==="qc2")return true;
-  if(estado==="qc2"&&role==="fto")return true;
-  return false;
+function getRolTipo(rol){return(ROLES[rol]||{tipo:"supervisor"}).tipo;}
+
+function formatDur(ms){
+  if(!ms||ms<=0)return"—";
+  var h=Math.floor(ms/36e5),d=Math.floor(h/24);
+  if(d>0)return d+"d "+(h%24)+"h";
+  if(h>0)return h+"h "+Math.floor((ms%36e5)/6e4)+"m";
+  return Math.floor(ms/6e4)+"m";
 }
 
-function nextEstado(nivel){
-  var flow={ejecutado:"qc1",qc1:"qc2",qc2:"fto",fto:"aprobado"};
-  return flow[nivel]||nivel;
+function flowBarPartida(estado){
+  var steps=["en_ejecucion","ejecutado","qc1","qc2","aprobado"];
+  var labs={en_ejecucion:"Ejec.",ejecutado:"Listo",qc1:"QC1",qc2:"QC2",aprobado:"✓"};
+  var idx=steps.indexOf(estado);
+  var h='<div class="flow-bar">';
+  steps.forEach(function(s,i){
+    if(i>0)h+='<span class="flow-arrow">›</span>';
+    var cls=i<idx?"fs-done":i===idx?(estado==="rechazado"?"fs-rejected":"fs-active"):"";
+    h+='<span class="flow-step '+cls+'">'+labs[s]+'</span>';
+  });
+  return h+'</div>';
 }
 
-function timeDiff(t1,t2){
-  if(!t1||!t2)return null;
-  var d1=t1.toDate?t1.toDate():new Date(t1);
-  var d2=t2.toDate?t2.toDate():new Date(t2);
-  var diff=Math.abs(d2-d1)/36e5;
-  if(diff<1)return Math.round(diff*60)+" min";
-  return diff.toFixed(1)+" hrs";
+function moduloEstadoBar(estadoM){
+  var steps=["fabricacion","r1","rf","entregado"];
+  var labs={fabricacion:"Fabricación",r1:"R1",rf:"RF",entregado:"✓ Entregado"};
+  var idx=steps.indexOf(estadoM||"fabricacion");
+  var h='<div class="modulo-estado-bar">';
+  steps.forEach(function(s,i){
+    if(i>0)h+='<span class="flow-arrow" style="font-size:12px">›</span>';
+    var cls=i<idx?"mes-done":i===idx?"mes-active":"mes-pending";
+    h+='<span class="mes-step '+cls+'">'+labs[s]+'</span>';
+  });
+  return h+'</div>';
 }
 
-// AUTH
+// ── NOTIFICACIONES ────────────────────────────────────────────────────────────
+function updateBadge(id,n){
+  var el=document.getElementById("nb-"+id);
+  if(!el)return;
+  if(n>0){el.textContent=n>99?"99+":n;el.style.display="inline-block";}
+  else el.style.display="none";
+}
+
+function listenNotifs(){
+  if(!userProfile)return;
+  var rt=getRolTipo(userProfile.rol);
+  var estadoEspera={qc1:"ejecutado",qc2:"qc1"};
+  var miEstado=estadoEspera[rt];
+
+  db.collection("modulos").where("activo","==",true).onSnapshot(function(snap){
+    var countPartidas=0,countModulo=0;
+    snap.docs.forEach(function(d){
+      var m=d.data();
+      var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
+      var estados=m.estados||{};
+      if(rt==="supervisor"){
+        partidas.forEach(function(p){
+          if(!p.sub&&estados[p.code]==="rechazado")countPartidas++;
+        });
+        if((m.estadoModulo==="r1")&&m.r1Observaciones)countModulo++;
+      } else if(miEstado){
+        partidas.forEach(function(p){
+          if(!p.sub&&estados[p.code]===miEstado)countPartidas++;
+        });
+      } else if(rt==="qc2"||rt==="admin"){
+        if(m.estadoModulo==="fabricacion"){
+          var todas=partidas.filter(function(p){return!p.sub;});
+          var todasQC2=todas.every(function(p){return estados[p.code]==="aprobado";});
+          if(todasQC2)countModulo++;
+        }
+        if(m.estadoModulo==="rf")countModulo++;
+      }
+    });
+    var total=countPartidas+countModulo;
+    updateBadge("revisar",total);
+    updateBadge("modulos",0);
+  });
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
 document.getElementById("btn-login").onclick=function(){
-  var email=document.getElementById("auth-email").value.trim();
-  var pass=document.getElementById("auth-pass").value;
+  var e=document.getElementById("auth-email").value.trim();
+  var p=document.getElementById("auth-pass").value;
   var err=document.getElementById("auth-err");
   var btn=document.getElementById("btn-login");
   err.textContent="";btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
-  auth.signInWithEmailAndPassword(email,pass).catch(function(){
-    err.textContent="Correo o contraseña incorrectos.";
-    btn.disabled=false;btn.textContent="Entrar";
+  auth.signInWithEmailAndPassword(e,p).catch(function(){
+    err.textContent="Correo o contraseña incorrectos.";btn.disabled=false;btn.textContent="Entrar";
   });
 };
 document.getElementById("btn-logout").onclick=function(){auth.signOut();};
@@ -289,6 +367,7 @@ auth.onAuthStateChanged(function(user){
       var tr=document.getElementById("topbar-role");
       tr.textContent=ri.label;tr.className="topbar-role "+ri.color;
       initApp();
+      setTimeout(listenNotifs,1000);
     });
   }else{
     currentUser=null;userProfile=null;
@@ -298,24 +377,26 @@ auth.onAuthStateChanged(function(user){
   }
 });
 
+// ── INIT ──────────────────────────────────────────────────────────────────────
 function initApp(){
-  var role=userProfile.rol;
+  var rt=getRolTipo(userProfile.rol);
   var tabs=[];
-  if(role.startsWith("supervisor"))tabs.push({id:"modulos",label:"Mis Módulos"});
-  if(role==="qc1"||role==="qc2"||role==="fto")tabs.push({id:"revisar",label:"Por Revisar"});
-  if(role==="gerente"||role==="admin"){tabs.push({id:"dashboard",label:"Dashboard"});tabs.push({id:"modulos",label:"Módulos"});}
-  if(role==="admin")tabs.push({id:"admin",label:"Administrar"});
+  tabs.push({id:"modulos",label:"Módulos"});
+  if(rt!=="gerente")tabs.push({id:"revisar",label:"Por Revisar",notif:true});
+  if(rt==="gerente"||rt==="admin")tabs.push({id:"reportes",label:"Reportes"});
+  if(rt==="admin")tabs.push({id:"admin",label:"Admin"});
   tabs.push({id:"historial",label:"Historial"});
+
   var nav=document.getElementById("nav-tabs");
   nav.innerHTML=tabs.map(function(t){
-    return '<div class="nav-tab'+(t.id===activeTab?" active":"")+'" data-tab="'+t.id+'">'+t.label+'</div>';
+    return'<div class="nav-tab'+(t.id===activeTab?" active":"")+'" data-tab="'+t.id+'">'+t.label
+      +(t.notif?'<span class="notif-badge" id="nb-revisar" style="display:none">0</span>':'')+'</div>';
   }).join("");
   nav.querySelectorAll(".nav-tab").forEach(function(el){
     el.onclick=function(){
       activeTab=el.dataset.tab;
       nav.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
-      el.classList.add("active");
-      renderTab();
+      el.classList.add("active");renderTab();
     };
   });
   renderTab();
@@ -326,67 +407,69 @@ function renderTab(){
   c.innerHTML='<div style="text-align:center;padding:40px"><span class="spinner"></span></div>';
   if(activeTab==="modulos")renderModulos();
   else if(activeTab==="revisar")renderRevisar();
-  else if(activeTab==="dashboard")renderDashboard();
+  else if(activeTab==="reportes")renderReportes();
   else if(activeTab==="admin")renderAdmin();
   else if(activeTab==="historial")renderHistorial();
 }
 
+// ── MÓDULOS ───────────────────────────────────────────────────────────────────
 function renderModulos(){
   activeListeners.forEach(function(u){if(u)u();});activeListeners=[];
   var unsub=db.collection("modulos").where("activo","==",true).onSnapshot(function(snap){
     var modulos=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
     modulos.sort(function(a,b){return(a.orden||999)-(b.orden||999);});
     var c=document.getElementById("main-content");if(!c)return;
+
     var total=modulos.length;
-    var completos=modulos.filter(function(m){
-      var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
-      var estados=m.estados||{};
-      return partidas.every(function(p){return estados[p.code]==="aprobado";});
-    }).length;
+    var entregados=modulos.filter(function(m){return m.estadoModulo==="entregado";}).length;
+    var enR1=modulos.filter(function(m){return m.estadoModulo==="r1";}).length;
+    var enRF=modulos.filter(function(m){return m.estadoModulo==="rf";}).length;
+
     var html='<div class="stats-row">';
     html+='<div class="stat-box"><div class="stat-num">'+total+'</div><div class="stat-label">En Planta</div></div>';
-    html+='<div class="stat-box"><div class="stat-num" style="color:var(--success)">'+completos+'</div><div class="stat-label">Completos</div></div>';
-    html+='<div class="stat-box"><div class="stat-num" style="color:var(--warning)">'+(total-completos)+'</div><div class="stat-label">En Progreso</div></div>';
+    html+='<div class="stat-box"><div class="stat-num" style="color:var(--success)">'+entregados+'</div><div class="stat-label">Entregados</div></div>';
+    html+='<div class="stat-box"><div class="stat-num" style="color:#fb923c">'+enR1+'</div><div class="stat-label">En R1</div></div>';
+    html+='<div class="stat-box"><div class="stat-num" style="color:var(--accent2)">'+enRF+'</div><div class="stat-label">En RF</div></div>';
     html+='</div>';
+
     html+='<div class="filters">';
-    html+='<button class="filter-btn'+(activeFilter==="todos"?" active":"")+'" onclick="setFilter(\'todos\')">Todos</button>';
-    html+='<button class="filter-btn'+(activeFilter==="seco"?" active":"")+'" onclick="setFilter(\'seco\')">M1 Secos</button>';
-    html+='<button class="filter-btn'+(activeFilter==="humedo"?" active":"")+'" onclick="setFilter(\'humedo\')">M2 Húmedos</button>';
-    html+='<button class="filter-btn'+(activeFilter==="pendiente"?" active":"")+'" onclick="setFilter(\'pendiente\')">Con Pendientes</button>';
+    var filterOpts={todos:"Todos",seco:"M1 Secos",humedo:"M2 Húmedos",r1:"En R1",rf:"En RF",entregado:"Entregados"};
+    Object.keys(filterOpts).forEach(function(f){
+      html+='<button class="filter-btn'+(activeFilter===f?" active":"")+'" onclick="setFilter(\''+f+'\')">'+filterOpts[f]+'</button>';
+    });
     html+='</div>';
+
     var filtered=modulos.filter(function(m){
       if(activeFilter==="seco")return m.tipo==="seco";
       if(activeFilter==="humedo")return m.tipo==="humedo";
-      if(activeFilter==="pendiente"){
-        var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
-        var estados=m.estados||{};
-        return!partidas.every(function(p){return estados[p.code]==="aprobado";});
-      }
+      if(activeFilter==="r1")return m.estadoModulo==="r1";
+      if(activeFilter==="rf")return m.estadoModulo==="rf";
+      if(activeFilter==="entregado")return m.estadoModulo==="entregado";
       return true;
     });
-    if(filtered.length===0){
-      html+='<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">Sin módulos</div></div>';
-    }else{
-      filtered.forEach(function(m){
-        var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
-        var estados=m.estados||{};
-        var ap=partidas.filter(function(p){return estados[p.code]==="aprobado";}).length;
-        var pct=Math.round(ap/partidas.length*100);
-        var enObs=partidas.some(function(p){return estados[p.code]==="observacion";});
-        var enRev=partidas.some(function(p){return["ejecutado","qc1","qc2","fto"].indexOf(estados[p.code])>=0;});
-        html+='<div class="module-item" onclick="openModulo(\''+m.id+'\')">';
-        html+='<div class="module-row"><div>';
-        html+='<div class="module-name">'+m.nombre+'</div>';
-        html+='<div class="module-meta"><span class="badge badge-'+m.tipo+'">'+(m.tipo==="seco"?"M1 Seco":"M2 Húmedo")+'</span>';
-        if(enObs)html+=' <span class="badge badge-observacion">Obs.</span>';
-        if(enRev)html+=' <span class="badge badge-ejecutado">En Revisión</span>';
-        html+='</div></div>';
-        html+='<div style="text-align:right"><div style="font-size:16px;font-weight:800;color:'+(pct===100?'var(--success)':'var(--accent)')+'">'+pct+'%</div>';
-        html+='<div style="font-size:10px;color:var(--text2)">'+ap+'/'+partidas.length+'</div></div></div>';
-        html+='<div class="progress-wrap"><div class="progress-bar" style="width:'+pct+'%;background:'+(pct===100?'var(--success)':'var(--accent)')+'"></div></div>';
-        html+='</div>';
-      });
-    }
+
+    filtered.forEach(function(m){
+      var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
+      var mainPartidas=partidas.filter(function(p){return!p.sub;});
+      var estados=m.estados||{};
+      var ap=mainPartidas.filter(function(p){return estados[p.code]==="aprobado";}).length;
+      var pct=Math.round(ap/mainPartidas.length*100);
+      var tieneRechazo=mainPartidas.some(function(p){return estados[p.code]==="rechazado";});
+      var estadoM=m.estadoModulo||"fabricacion";
+
+      html+='<div class="module-item" onclick="openModulo(\''+m.id+'\')">';
+      html+='<div class="module-row"><div style="flex:1"><div class="module-name">'+m.nombre+'</div>';
+      html+='<div class="module-meta"><span class="badge badge-'+m.tipo+'">'+(m.tipo==="seco"?"M1 Seco":"M2 Húmedo")+'</span>';
+      html+='<span class="badge badge-'+estadoM+'">'+(ESTADO_M_LABELS[estadoM]||estadoM)+'</span>';
+      if(tieneRechazo)html+='<span class="badge badge-rechazado">Con Rechazos</span>';
+      if(m.tiempoTotal&&estadoM==="entregado")html+='<span class="tiempo-tag">⏱ '+formatDur(m.tiempoTotal)+'</span>';
+      html+='</div></div>';
+      html+='<div style="text-align:right;flex-shrink:0"><div style="font-size:15px;font-weight:800;color:'+(pct===100?'var(--success)':'var(--accent)')+'">'+pct+'%</div>';
+      html+='<div style="font-size:10px;color:var(--text2)">'+ap+'/'+mainPartidas.length+'</div></div></div>';
+      html+='<div class="progress-wrap"><div class="progress-bar" style="width:'+pct+'%;background:'+(pct===100?'var(--success)':tieneRechazo?'var(--danger)':'var(--accent)')+'"></div></div></div>';
+    });
+
+    if(filtered.length===0)html+='<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">Sin módulos en esta vista</div></div>';
     c.innerHTML=html;
   });
   activeListeners.push(unsub);
@@ -394,56 +477,109 @@ function renderModulos(){
 
 function setFilter(f){activeFilter=f;renderModulos();}
 
+// ── ABRIR MÓDULO ──────────────────────────────────────────────────────────────
 function openModulo(moduloId){
   db.collection("modulos").doc(moduloId).get().then(function(snap){
     if(!snap.exists)return;
     var m=Object.assign({id:snap.id},snap.data());
     var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
+    var mainPartidas=partidas.filter(function(p){return!p.sub;});
     var estados=m.estados||{};
-    var role=userProfile.rol;
-    var grupoMap={supervisor_corte:"corte",supervisor_obra_gruesa:"obra_gruesa",supervisor_terminaciones:"terminaciones",supervisor_recepcion:"recepcion"};
-    var miGrupo=grupoMap[role];
+    var tiempos=m.tiempos||{};
+    var observaciones=m.observaciones||{};
+    var rt=getRolTipo(userProfile.rol);
+    var estadoM=m.estadoModulo||"fabricacion";
+
+    var ap=mainPartidas.filter(function(p){return estados[p.code]==="aprobado";}).length;
+    var pct=Math.round(ap/mainPartidas.length*100);
+    var todasAprobadas=ap===mainPartidas.length;
+
     var html='<button class="modal-close" onclick="closeModal()">×</button>';
     html+='<div class="modal-title">'+m.nombre+'</div>';
-    html+='<div class="modal-sub"><span class="badge badge-'+m.tipo+'">'+(m.tipo==="seco"?"M1 Seco":"M2 Húmedo")+'</span> '+( m.edificio||"")+'</div>';
+    html+='<div class="modal-sub"><span class="badge badge-'+m.tipo+'">'+(m.tipo==="seco"?"M1 Seco":"M2 Húmedo")+'</span>';
+    html+='<span style="color:var(--text2)">'+ap+'/'+mainPartidas.length+' aprobadas QC2</span>';
+    if(m.tiempoTotal&&estadoM==="entregado")html+='<span class="tiempo-tag">⏱ '+formatDur(m.tiempoTotal)+'</span>';
+    html+='</div>';
+    html+=moduloEstadoBar(estadoM);
+    html+='<div class="progress-wrap" style="margin-bottom:16px"><div class="progress-bar" style="width:'+pct+'%;background:'+(pct===100?'var(--success)':'var(--accent)')+'"></div></div>';
+
+    // Acciones a nivel de módulo (R1, RF)
+    if((rt==="qc2"||rt==="admin")&&todasAprobadas&&estadoM==="fabricacion"){
+      html+='<div style="background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.3);border-radius:var(--radius);padding:14px;margin-bottom:16px">';
+      html+='<div style="font-size:12px;font-weight:700;color:#fb923c;margin-bottom:8px">✅ Todas las partidas aprobadas — Emitir R1</div>';
+      html+='<textarea id="r1-obs" placeholder="Observaciones del R1 (opcional)..."></textarea>';
+      html+='<button class="btn btn-primary" style="margin-top:8px" onclick="emitirR1(\''+moduloId+'\')">Emitir R1</button>';
+      html+='</div>';
+    }
+    if(estadoM==="r1"){
+      html+='<div style="background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.25);border-radius:var(--radius);padding:14px;margin-bottom:16px">';
+      html+='<div style="font-size:12px;font-weight:700;color:#fb923c;margin-bottom:4px">📋 R1 Emitido</div>';
+      if(m.r1Observaciones)html+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">Observaciones: '+m.r1Observaciones+'</div>';
+      if(rt==="supervisor"||rt==="admin"){
+        html+='<div style="font-size:11px;color:var(--text2);margin-bottom:8px">Subsana las observaciones y confirma para pasar a Revisión Final</div>';
+        html+='<button class="btn btn-approve" onclick="subsanarR1(\''+moduloId+'\')">Observaciones Subsanadas → RF</button>';
+      }
+      html+='</div>';
+    }
+    if(estadoM==="rf"&&(rt==="qc2"||rt==="admin")){
+      html+='<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius);padding:14px;margin-bottom:16px">';
+      html+='<div style="font-size:12px;font-weight:700;color:var(--success);margin-bottom:8px">🏁 Revisión Final — Aprobar Entrega</div>';
+      html+='<button class="btn btn-approve" onclick="aprobarRF(\''+moduloId+'\')">Aprobar RF — Marcar Entregado</button>';
+      html+='</div>';
+    }
+
+    // Partidas por grupo
     var grupos=[];
-    partidas.forEach(function(p){if(!p.sub&&grupos.indexOf(p.grupo)<0)grupos.push(p.grupo);});
+    mainPartidas.forEach(function(p){if(grupos.indexOf(p.grupo)<0)grupos.push(p.grupo);});
     grupos.forEach(function(grupo){
-      var gp=partidas.filter(function(p){return p.grupo===grupo&&!p.sub;});
-      html+='<div class="section-label">'+grupo.replace("_"," ").toUpperCase()+'</div>';
+      var gp=mainPartidas.filter(function(p){return p.grupo===grupo;});
+      html+='<div class="section-label">'+grupo.replace(/_/g," ").toUpperCase()+'</div>';
       gp.forEach(function(p){
-        var estado=estados[p.code]||"pendiente";
-        var puedo=role==="admin"||role==="gerente"||(canActOn(estado,role)&&(role.startsWith("supervisor")?miGrupo===p.grupo:true));
-        var tiempos=(m.tiempos&&m.tiempos[p.code])||{};
+        var estado=estados[p.code]||"en_ejecucion";
+        var t=tiempos[p.code]||{};
+        var obs=observaciones[p.code]||"";
+        var esRechazado=estado==="rechazado";
+
+        var tiempoStr="";
+        if(t.inicio_at&&t.aprobado_at){
+          tiempoStr="⏱ "+formatDur(new Date(t.aprobado_at)-new Date(t.inicio_at));
+        } else if(t.inicio_at){
+          tiempoStr="⏳ "+formatDur(new Date()-new Date(t.inicio_at))+" transcurrido";
+        }
+
+        var puedeAvanzar=false,puedeRechazar=false;
+        if(rt==="admin")puedeAvanzar=puedeRechazar=estado!=="aprobado";
+        else if(rt==="supervisor"&&(estado==="en_ejecucion"||estado==="rechazado"))puedeAvanzar=true;
+        else if(rt==="qc1"&&estado==="ejecutado"){puedeAvanzar=true;puedeRechazar=true;}
+        else if(rt==="qc2"&&estado==="qc1"){puedeAvanzar=true;puedeRechazar=true;}
+
         var acciones="";
-        if(puedo&&estado!=="aprobado"){
-          if(estado==="pendiente"||estado==="observacion"){
-            acciones='<button class="btn-sm btn-submit" onclick="marcarEjecutado(\''+moduloId+'\',\''+p.code+'\')">Marcar Listo</button>';
-          }else if(estado==="ejecutado"){
-            acciones='<button class="btn-sm btn-approve" onclick="aprobar(\''+moduloId+'\',\''+p.code+'\',\'qc1\')">Aprobar QC1</button> <button class="btn-sm btn-reject" onclick="rechazar(\''+moduloId+'\',\''+p.code+'\')">Obs.</button>';
-          }else if(estado==="qc1"){
-            acciones='<button class="btn-sm btn-approve" onclick="aprobar(\''+moduloId+'\',\''+p.code+'\',\'qc2\')">Aprobar QC2</button> <button class="btn-sm btn-reject" onclick="rechazar(\''+moduloId+'\',\''+p.code+'\')">Obs.</button>';
-          }else if(estado==="qc2"){
-            acciones='<button class="btn-sm btn-approve" onclick="aprobar(\''+moduloId+'\',\''+p.code+'\',\'fto\')">Aprobar FTO</button> <button class="btn-sm btn-reject" onclick="rechazar(\''+moduloId+'\',\''+p.code+'\')">Obs.</button>';
-          }else if(estado==="fto"){
-            acciones='<button class="btn-sm btn-approve" onclick="aprobar(\''+moduloId+'\',\''+p.code+'\',\'fto\')">Aprobar Final</button> <button class="btn-sm btn-reject" onclick="rechazar(\''+moduloId+'\',\''+p.code+'\')">Obs.</button>';
+        if(estado!=="aprobado"){
+          if(puedeAvanzar){
+            var lbl=estado==="en_ejecucion"||estado==="rechazado"?"Marcar Listo":"Aprobar";
+            acciones+='<button class="btn-sm btn-submit" onclick="avanzarPartida(\''+moduloId+'\',\''+p.code+'\')">'+lbl+'</button>';
+          }
+          if(puedeRechazar){
+            acciones+='<button class="btn-sm btn-reject" onclick="rechazarPartida(\''+moduloId+'\',\''+p.code+'\')">Rechazar</button>';
           }
         }
-        var tiempoStr="";
-        if(tiempos.ejecutado_at&&tiempos.aprobado_at)tiempoStr="Total: "+timeDiff(tiempos.ejecutado_at,tiempos.aprobado_at);
-        html+='<div class="partida-item"><div class="partida-left">';
+
+        html+='<div class="partida-item'+(esRechazado?" rechazado-bg":"")+'"><div class="partida-left">';
         html+='<div class="partida-code">'+p.code+'</div>';
         html+='<div class="partida-name">'+p.name+'</div>';
-        if(tiempoStr)html+='<div class="partida-time">⏱ '+tiempoStr+'</div>';
-        html+='</div><div class="partida-actions"><span class="badge badge-'+estado+'">'+ESTADO_LABELS[estado]+'</span>'+acciones+'</div></div>';
+        html+=flowBarPartida(estado);
+        if(tiempoStr)html+='<div class="partida-time">'+tiempoStr+'</div>';
+        if(obs&&esRechazado)html+='<div class="partida-obs">⚠ '+obs+'</div>';
+        html+='</div><div class="partida-actions">'+acciones+'</div></div>';
       });
     });
-    html+='<div style="height:20px"></div>';
+    html+='<div style="height:24px"></div>';
     showModal(html);
   });
 }
 
-function actualizarModulo(moduloId, code, nuevoEstado, extra, accion, obsText){
+// ── ACCIONES PARTIDA ──────────────────────────────────────────────────────────
+function actualizarPartida(moduloId,code,nuevoEstado,obsText,accion){
   db.collection("modulos").doc(moduloId).get().then(function(snap){
     if(!snap.exists)return;
     var data=snap.data();
@@ -455,154 +591,371 @@ function actualizarModulo(moduloId, code, nuevoEstado, extra, accion, obsText){
 
     estados[code]=nuevoEstado;
     if(!tiempos[code])tiempos[code]={};
+    tiempos[code][accion+"_at"]=now;
+    tiempos[code][accion+"_por"]=usuario;
+    if(!tiempos[code].inicio_at)tiempos[code].inicio_at=now;
+    if(nuevoEstado==="aprobado")tiempos[code].aprobado_at=now;
+    if(obsText)observaciones[code]=obsText;
+    else if(nuevoEstado!=="rechazado")delete observaciones[code];
 
-    if(accion==="ejecutado"){
-      tiempos[code].ejecutado_at=now;
-      tiempos[code].ejecutado_por=usuario;
-    }else if(accion.startsWith("aprobado_")){
-      var nivel=accion.replace("aprobado_","");
-      tiempos[code][nivel+"_at"]=now;
-      tiempos[code][nivel+"_por"]=usuario;
-      if(nuevoEstado==="aprobado")tiempos[code].aprobado_at=now;
-    }else if(accion==="observacion"){
-      observaciones[code]=obsText||"";
-      tiempos[code].obs_at=now;
+    // Verificar si todas las partidas están aprobadas → notificar QC2 para R1
+    var partidas=(data.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO).filter(function(p){return!p.sub;});
+    var todasAprobadas=partidas.every(function(p){return(p.code===code?nuevoEstado:estados[p.code])==="aprobado";});
+
+    var updateData={estados:estados,tiempos:tiempos,observaciones:observaciones};
+    if(todasAprobadas&&(data.estadoModulo||"fabricacion")==="fabricacion"){
+      updateData.notifQC2=true; // flag para QC2
     }
 
-    db.collection("modulos").doc(moduloId).update({
-      estados:estados, tiempos:tiempos, observaciones:observaciones
-    }).then(function(){
-      db.collection("historial").add({
-        moduloId:moduloId, partida:code, accion:accion,
-        observacion:obsText||"", usuario:usuario, rol:userProfile.rol,
-        timestamp:firebase.firestore.FieldValue.serverTimestamp()
-      });
-      closeModal();
-      setTimeout(function(){openModulo(moduloId);},400);
-    }).catch(function(e){console.log("Error guardando:",e.message);});
+    db.collection("modulos").doc(moduloId).update(updateData).then(function(){
+      registrarHistorial(moduloId,data.nombre,code,accion,nuevoEstado,obsText||"",usuario);
+      closeModal();setTimeout(function(){openModulo(moduloId);},400);
+    }).catch(function(e){alert("Error: "+e.message);});
   });
 }
 
-function marcarEjecutado(moduloId,code){
-  actualizarModulo(moduloId,code,"ejecutado",null,"ejecutado","");
+function avanzarPartida(moduloId,code){
+  db.collection("modulos").doc(moduloId).get().then(function(snap){
+    var estados=snap.data().estados||{};
+    var actual=estados[code]||"en_ejecucion";
+    var siguiente=SIGUIENTE_PARTIDA[actual]||actual;
+    actualizarPartida(moduloId,code,siguiente,"","avance");
+  });
 }
 
-function aprobar(moduloId,code,nivel){
-  var siguiente=nextEstado(nivel);
-  actualizarModulo(moduloId,code,siguiente,null,"aprobado_"+nivel,"");
+function rechazarPartida(moduloId,code){
+  db.collection("modulos").doc(moduloId).get().then(function(snap){
+    var estados=snap.data().estados||{};
+    var actual=estados[code]||"en_ejecucion";
+    var anterior=ANTERIOR_PARTIDA[actual]||"en_ejecucion";
+    showModal(
+      '<button class="modal-close" onclick="closeModal()">×</button>'+
+      '<div class="modal-title">Rechazar Partida</div>'+
+      '<div class="modal-sub" style="display:block"><span style="font-family:monospace;font-size:11px">'+code+'</span><br>'+
+      '<span style="color:var(--warning)">Estado actual: '+ESTADO_P_LABELS[actual]+'</span> → '+
+      '<span style="color:var(--danger)">Vuelve a: '+ESTADO_P_LABELS[anterior]+'</span></div>'+
+      '<textarea id="obs-text" placeholder="Motivo del rechazo (obligatorio)..."></textarea>'+
+      '<div style="margin-top:10px"><button class="btn" style="background:var(--danger);color:#fff" onclick="confirmarRechazoPartida(\''+moduloId+'\',\''+code+'\',\''+anterior+'\')">Confirmar Rechazo</button></div>'
+    );
+  });
 }
 
-function rechazar(moduloId,code){
-  showModal('<button class="modal-close" onclick="closeModal()">×</button><div class="modal-title">Registrar Observación</div><div class="modal-sub">'+code+'</div><textarea id="obs-text" placeholder="Describe el problema..."></textarea><div style="margin-top:12px"><button class="btn" onclick="confirmarRechazo(\''+moduloId+'\',\''+code+'\')">Registrar</button></div>');
-}
-
-function confirmarRechazo(moduloId,code){
+function confirmarRechazoPartida(moduloId,code,anterior){
   var obs=document.getElementById("obs-text").value.trim();
-  if(!obs){alert("Escribe la observación");return;}
-  actualizarModulo(moduloId,code,"observacion",null,"observacion",obs);
+  if(!obs){alert("El motivo es obligatorio");return;}
+  actualizarPartida(moduloId,code,anterior,obs,"rechazo");
 }
 
+// ── ACCIONES MÓDULO (R1, RF) ──────────────────────────────────────────────────
+function emitirR1(moduloId){
+  var obs=document.getElementById("r1-obs")?document.getElementById("r1-obs").value.trim():"";
+  var usuario=userProfile.nombre||currentUser.email;
+  db.collection("modulos").doc(moduloId).update({
+    estadoModulo:"r1",
+    r1Observaciones:obs,
+    r1EmitidoPor:usuario,
+    r1EmitidoAt:new Date().toISOString(),
+    notifSupervisor:true
+  }).then(function(){
+    registrarHistorial(moduloId,"","—","emision_r1","r1",obs,usuario);
+    closeModal();setTimeout(function(){openModulo(moduloId);},400);
+  });
+}
+
+function subsanarR1(moduloId){
+  var usuario=userProfile.nombre||currentUser.email;
+  db.collection("modulos").doc(moduloId).update({
+    estadoModulo:"rf",
+    rfSubsanadoAt:new Date().toISOString(),
+    rfSubsanadoPor:usuario,
+    notifQC2RF:true
+  }).then(function(){
+    registrarHistorial(moduloId,"","—","subsanacion_r1","rf","",usuario);
+    closeModal();setTimeout(function(){openModulo(moduloId);},400);
+  });
+}
+
+function aprobarRF(moduloId){
+  var usuario=userProfile.nombre||currentUser.email;
+  db.collection("modulos").doc(moduloId).get().then(function(snap){
+    var data=snap.data();
+    var inicio=data.creado_at?(data.creado_at.toDate?data.creado_at.toDate():new Date(data.creado_at)):new Date();
+    var tiempoTotal=new Date()-inicio;
+    db.collection("modulos").doc(moduloId).update({
+      estadoModulo:"entregado",
+      rfAprobadoAt:new Date().toISOString(),
+      rfAprobadoPor:usuario,
+      tiempoTotal:tiempoTotal,
+      activo:true
+    }).then(function(){
+      registrarHistorial(moduloId,data.nombre||"","—","aprobacion_rf","entregado","",usuario);
+      closeModal();setTimeout(function(){openModulo(moduloId);},400);
+    });
+  });
+}
+
+function registrarHistorial(moduloId,nombreModulo,code,accion,nuevoEstado,obs,usuario){
+  db.collection("historial").add({
+    moduloId:moduloId,modulo:nombreModulo,partida:code,
+    accion:accion,nuevoEstado:nuevoEstado,observacion:obs,
+    usuario:usuario,rol:userProfile.rol,
+    timestamp:firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+// ── POR REVISAR ───────────────────────────────────────────────────────────────
 function renderRevisar(){
   activeListeners.forEach(function(u){if(u)u();});activeListeners=[];
-  var role=userProfile.rol;
-  var estadoMap={qc1:"ejecutado",qc2:"qc1",fto:"qc2"};
-  var miEstado=estadoMap[role];
+  var rt=getRolTipo(userProfile.rol);
+  var estadoEspera={qc1:"ejecutado",qc2:"qc1"};
+  var miEstadoPartida=estadoEspera[rt];
+
   var unsub=db.collection("modulos").where("activo","==",true).onSnapshot(function(snap){
     var c=document.getElementById("main-content");if(!c)return;
-    var pendientes=[];
+    var itemsPartida=[],itemsModulo=[];
+
     snap.docs.forEach(function(d){
       var m=Object.assign({id:d.id},d.data());
-      var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
+      var partidas=(m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO).filter(function(p){return!p.sub;});
       var estados=m.estados||{};
-      partidas.forEach(function(p){
-        if(estados[p.code]===miEstado)pendientes.push({modulo:m,partida:p,tiempos:(m.tiempos&&m.tiempos[p.code])||{}});
-      });
+      var estadoM=m.estadoModulo||"fabricacion";
+
+      // Partidas que esperan mi acción
+      if(miEstadoPartida){
+        partidas.forEach(function(p){
+          if(estados[p.code]===miEstadoPartida)
+            itemsPartida.push({modulo:m,partida:p,tiempos:(m.tiempos&&m.tiempos[p.code])||{}});
+        });
+      }
+
+      // Rechazos para supervisor
+      if(rt==="supervisor"){
+        partidas.forEach(function(p){
+          if(estados[p.code]==="rechazado")
+            itemsPartida.push({modulo:m,partida:p,tipo:"rechazo",obs:(m.observaciones||{})[p.code]||""});
+        });
+        if(estadoM==="r1"&&m.r1Observaciones)
+          itemsModulo.push({modulo:m,tipo:"r1_obs"});
+      }
+
+      // QC2: módulos listos para R1 y RF
+      if(rt==="qc2"||rt==="admin"){
+        var todasAp=partidas.every(function(p){return estados[p.code]==="aprobado";});
+        if(todasAp&&estadoM==="fabricacion")itemsModulo.push({modulo:m,tipo:"emitir_r1"});
+        if(estadoM==="rf")itemsModulo.push({modulo:m,tipo:"aprobar_rf"});
+      }
     });
-    if(pendientes.length===0){
-      c.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">Sin pendientes</div><div class="empty-sub">No hay partidas esperando tu revisión</div></div>';
+
+    var total=itemsPartida.length+itemsModulo.length;
+    updateBadge("revisar",total);
+
+    if(total===0){
+      c.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">Sin pendientes</div><div class="empty-sub">No hay elementos esperando tu acción</div></div>';
       return;
     }
-    var html='<div class="stats-row"><div class="stat-box"><div class="stat-num" style="color:var(--warning)">'+pendientes.length+'</div><div class="stat-label">Por Revisar</div></div></div>';
-    pendientes.forEach(function(item){
-      var m=item.modulo,p=item.partida,tiempos=item.tiempos;
-      html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
-      html+='<div><div style="font-size:13px;font-weight:700">'+m.nombre+'</div>';
-      html+='<div style="margin-top:3px"><span class="badge badge-'+m.tipo+'">'+(m.tipo==="seco"?"M1 Seco":"M2 Húmedo")+'</span></div></div>';
-      html+='<span class="badge badge-ejecutado">Esperando '+role.toUpperCase()+'</span></div>';
-      html+='<div class="partida-item"><div class="partida-left">';
-      html+='<div class="partida-code">'+p.code+'</div><div class="partida-name">'+p.name+'</div>';
-      html+='</div><div class="partida-actions">';
-      html+='<button class="btn-sm btn-approve" onclick="aprobar(\''+m.id+'\',\''+p.code+'\',\''+role+'\')">Aprobar</button>';
-      html+='<button class="btn-sm btn-reject" onclick="rechazar(\''+m.id+'\',\''+p.code+'\')">Obs.</button>';
-      html+='</div></div></div>';
-    });
+
+    var html='<div class="stats-row"><div class="stat-box"><div class="stat-num" style="color:var(--warning)">'+total+'</div><div class="stat-label">Pendientes</div></div></div>';
+
+    // Acciones de módulo
+    if(itemsModulo.length>0){
+      html+='<div class="section-label">Acciones de Módulo</div>';
+      itemsModulo.forEach(function(item){
+        var m=item.modulo;
+        html+='<div class="card">';
+        html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">';
+        html+='<div><div style="font-size:13px;font-weight:700;cursor:pointer" onclick="openModulo(\''+m.id+'\')">'+m.nombre+'</div>';
+        html+='<div style="margin-top:4px"><span class="badge badge-'+m.tipo+'">'+(m.tipo==="seco"?"M1 Seco":"M2 Húmedo")+'</span></div></div>';
+        if(item.tipo==="emitir_r1"){
+          html+='<span class="badge badge-r1">Listo para R1</span></div>';
+          html+='<button class="btn btn-primary" onclick="openModulo(\''+m.id+'\')">Ver y Emitir R1</button>';
+        } else if(item.tipo==="aprobar_rf"){
+          html+='<span class="badge badge-rf">En RF</span></div>';
+          html+='<button class="btn btn-approve" onclick="aprobarRF(\''+m.id+'\')">Aprobar RF — Entregar</button>';
+        } else if(item.tipo==="r1_obs"){
+          html+='<span class="badge badge-r1">R1 con Obs.</span></div>';
+          html+='<div style="font-size:12px;color:var(--warning);margin-bottom:8px">⚠ '+m.r1Observaciones+'</div>';
+          html+='<button class="btn btn-submit" onclick="subsanarR1(\''+m.id+'\')">Marcar Subsanado → RF</button>';
+        }
+        html+='</div>';
+      });
+    }
+
+    // Acciones de partida
+    if(itemsPartida.length>0){
+      html+='<div class="section-label">Partidas por Revisar</div>';
+      itemsPartida.forEach(function(item){
+        var m=item.modulo,p=item.partida;
+        var t=item.tiempos||{};
+        var espera=t.inicio_at?formatDur(new Date()-new Date(t.inicio_at)):"—";
+        var esRechazo=item.tipo==="rechazo";
+        html+='<div class="card'+(esRechazo?" ":'')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
+        html+='<div><div style="font-size:13px;font-weight:700;cursor:pointer" onclick="openModulo(\''+m.id+'\')">'+m.nombre+'</div>';
+        html+='<div style="margin-top:3px"><span class="badge badge-'+m.tipo+'">'+(m.tipo==="seco"?"M1 Seco":"M2 Húmedo")+'</span></div></div>';
+        html+=(esRechazo?'<span class="badge badge-rechazado">Rechazado</span>':'<span class="badge badge-ejecutado">Esperando '+rt.toUpperCase()+'</span>')+'</div>';
+        html+='<div class="partida-item'+(esRechazo?" rechazado-bg":"")+'"><div class="partida-left">';
+        html+='<div class="partida-code">'+p.code+'</div><div class="partida-name">'+p.name+'</div>';
+        if(esRechazo&&item.obs)html+='<div class="partida-obs">⚠ '+item.obs+'</div>';
+        else if(!esRechazo)html+='<div class="partida-time">⏳ En espera: '+espera+'</div>';
+        html+='</div><div class="partida-actions">';
+        if(!esRechazo){
+          html+='<button class="btn-sm btn-approve" onclick="avanzarPartida(\''+m.id+'\',\''+p.code+'\')">Aprobar</button>';
+          html+='<button class="btn-sm btn-reject" onclick="rechazarPartida(\''+m.id+'\',\''+p.code+'\')">Rechazar</button>';
+        } else {
+          html+='<button class="btn-sm btn-submit" onclick="avanzarPartida(\''+m.id+'\',\''+p.code+'\')">Reenviar</button>';
+        }
+        html+='</div></div></div>';
+      });
+    }
     c.innerHTML=html;
   });
   activeListeners.push(unsub);
 }
 
-function renderDashboard(){
+// ── REPORTES (GERENTE) ────────────────────────────────────────────────────────
+function renderReportes(){
   activeListeners.forEach(function(u){if(u)u();});activeListeners=[];
+  var filtroTipo="todos";
   var unsub=db.collection("modulos").where("activo","==",true).onSnapshot(function(snap){
     var c=document.getElementById("main-content");if(!c)return;
     var modulos=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
-    var totalP=0,ap=0,enRev=0,obs=0,cuellos={};
+
+    // Counters por etapa
+    var contadores={en_ejecucion:0,ejecutado:0,qc1:0,qc2:0,aprobado:0,rechazado:0};
+    var contadoresSeco={en_ejecucion:0,ejecutado:0,qc1:0,qc2:0,aprobado:0,rechazado:0};
+    var contadoresHumedo={en_ejecucion:0,ejecutado:0,qc1:0,qc2:0,aprobado:0,rechazado:0};
+    var modulosEstado={fabricacion:0,r1:0,rf:0,entregado:0};
+    var tiemposTotales=[],tiemposPorPartida={};
+    var totalPartidas=0,totalAprobadas=0,totalRechazos=0;
+
     modulos.forEach(function(m){
-      var partidas=m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
+      var partidas=(m.tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO).filter(function(p){return!p.sub;});
       var estados=m.estados||{};
+      var tiempos=m.tiempos||{};
+      var estadoM=m.estadoModulo||"fabricacion";
+      modulosEstado[estadoM]=(modulosEstado[estadoM]||0)+1;
+      if(m.tiempoTotal)tiemposTotales.push(m.tiempoTotal);
+
       partidas.forEach(function(p){
-        totalP++;
-        var est=estados[p.code]||"pendiente";
-        if(est==="aprobado")ap++;
-        else if(["ejecutado","qc1","qc2","fto"].indexOf(est)>=0){enRev++;if(!cuellos[p.code])cuellos[p.code]={name:p.name,count:0};cuellos[p.code].count++;}
-        else if(est==="observacion")obs++;
+        var est=estados[p.code]||"en_ejecucion";
+        totalPartidas++;
+        if(est==="aprobado")totalAprobadas++;
+        if(est==="rechazado")totalRechazos++;
+        contadores[est]=(contadores[est]||0)+1;
+        if(m.tipo==="seco")contadoresSeco[est]=(contadoresSeco[est]||0)+1;
+        else contadoresHumedo[est]=(contadoresHumedo[est]||0)+1;
+
+        // Tiempos por partida
+        var t=tiempos[p.code]||{};
+        if(t.inicio_at&&t.aprobado_at){
+          var dur=new Date(t.aprobado_at)-new Date(t.inicio_at);
+          if(!tiemposPorPartida[p.code])tiemposPorPartida[p.code]={name:p.name,total:0,count:0};
+          tiemposPorPartida[p.code].total+=dur;
+          tiemposPorPartida[p.code].count++;
+        }
       });
     });
-    var pct=totalP>0?Math.round(ap/totalP*100):0;
-    var topC=Object.values(cuellos).sort(function(a,b){return b.count-a.count;}).slice(0,6);
-    var html='<div class="dash-section"><div class="dash-title">Avance General</div>';
+
+    var pctGlobal=totalPartidas>0?Math.round(totalAprobadas/totalPartidas*100):0;
+    var tiempoPromedio=tiemposTotales.length>0?tiemposTotales.reduce(function(a,b){return a+b;},0)/tiemposTotales.length:0;
+
+    // Top partidas más lentas
+    var topLentas=Object.values(tiemposPorPartida).filter(function(x){return x.count>0;})
+      .map(function(x){return Object.assign({},x,{promedio:x.total/x.count});})
+      .sort(function(a,b){return b.promedio-a.promedio;}).slice(0,5);
+
+    var html='<div class="reporte-section"><div class="reporte-title">Resumen General</div>';
     html+='<div class="stats-row">';
-    html+='<div class="stat-box"><div class="stat-num">'+pct+'%</div><div class="stat-label">Avance</div></div>';
-    html+='<div class="stat-box"><div class="stat-num" style="color:var(--success)">'+ap+'</div><div class="stat-label">Aprobadas</div></div>';
-    html+='<div class="stat-box"><div class="stat-num" style="color:var(--warning)">'+enRev+'</div><div class="stat-label">En Revisión</div></div>';
-    html+='<div class="stat-box"><div class="stat-num" style="color:var(--danger)">'+obs+'</div><div class="stat-label">Observaciones</div></div>';
-    html+='</div><div class="progress-wrap" style="height:10px"><div class="progress-bar" style="width:'+pct+'%"></div></div></div>';
-    html+='<div class="dash-section"><div class="dash-title">Cuellos de Botella</div>';
-    if(topC.length===0)html+='<div style="color:var(--text2);font-size:13px">Sin cuellos activos</div>';
-    else topC.forEach(function(item){html+='<div class="cuello-item"><div style="flex:1"><div style="font-size:12px;font-weight:600">'+item.name+'</div></div><div class="cuello-count">'+item.count+'</div></div>';});
-    html+='</div>';
+    html+='<div class="stat-box"><div class="stat-num">'+pctGlobal+'%</div><div class="stat-label">Avance Global</div></div>';
+    html+='<div class="stat-box"><div class="stat-num" style="color:var(--success)">'+totalAprobadas+'</div><div class="stat-label">Partidas Aprobadas</div></div>';
+    html+='<div class="stat-box"><div class="stat-num" style="color:var(--danger)">'+totalRechazos+'</div><div class="stat-label">Rechazos Totales</div></div>';
+    html+='<div class="stat-box"><div class="stat-num">'+modulos.length+'</div><div class="stat-label">Módulos</div></div>';
+    html+='</div></div>';
+
+    html+='<div class="reporte-section"><div class="reporte-title">Estado de Módulos</div>';
+    html+='<div class="etapa-grid">';
+    html+='<div class="etapa-box"><div class="etapa-num">'+modulosEstado.fabricacion+'</div><div class="etapa-label">En Fabricación</div></div>';
+    html+='<div class="etapa-box"><div class="etapa-num" style="color:#fb923c">'+modulosEstado.r1+'</div><div class="etapa-label">En R1</div></div>';
+    html+='<div class="etapa-box"><div class="etapa-num" style="color:var(--accent2)">'+modulosEstado.rf+'</div><div class="etapa-label">En RF</div></div>';
+    html+='<div class="etapa-box"><div class="etapa-num" style="color:var(--success)">'+modulosEstado.entregado+'</div><div class="etapa-label">Entregados</div></div>';
+    html+='</div></div>';
+
+    html+='<div class="reporte-section"><div class="reporte-title">Partidas por Etapa — Todos los Módulos</div>';
+    html+='<div class="etapa-grid">';
+    var etapas=[["en_ejecucion","En Ejecución","var(--text2)"],["ejecutado","Ejecutado","var(--warning)"],["qc1","En QC1","var(--accent2)"],["qc2","En QC2","var(--humedo)"],["aprobado","Aprobado QC2","var(--success)"],["rechazado","Rechazado","var(--danger)"]];
+    etapas.forEach(function(e){
+      html+='<div class="etapa-box"><div class="etapa-num" style="color:'+e[2]+'">'+contadores[e[0]]+'</div><div class="etapa-label">'+e[1]+'</div></div>';
+    });
+    html+='</div></div>';
+
+    html+='<div class="reporte-section"><div class="reporte-title">Partidas por Tipo de Módulo</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    html+='<div><div style="font-size:11px;font-weight:700;color:var(--seco);margin-bottom:8px">M1 SECOS</div>';
+    etapas.forEach(function(e){
+      html+='<div class="reporte-row"><span class="reporte-label">'+e[1]+'</span><span class="reporte-val" style="color:'+e[2]+'">'+contadoresSeco[e[0]]+'</span></div>';
+    });
+    html+='</div><div><div style="font-size:11px;font-weight:700;color:var(--humedo);margin-bottom:8px">M2 HÚMEDOS</div>';
+    etapas.forEach(function(e){
+      html+='<div class="reporte-row"><span class="reporte-label">'+e[1]+'</span><span class="reporte-val" style="color:'+e[2]+'">'+contadoresHumedo[e[0]]+'</span></div>';
+    });
+    html+='</div></div></div>';
+
+    if(tiemposTotales.length>0){
+      html+='<div class="reporte-section"><div class="reporte-title">Tiempos de Entrega</div>';
+      html+='<div class="reporte-row"><span class="reporte-label">Módulos entregados</span><span class="reporte-val" style="color:var(--success)">'+tiemposTotales.length+'</span></div>';
+      html+='<div class="reporte-row"><span class="reporte-label">Tiempo promedio entrega</span><span class="reporte-val">'+formatDur(tiempoPromedio)+'</span></div>';
+      html+='<div class="reporte-row"><span class="reporte-label">Más rápido</span><span class="reporte-val" style="color:var(--success)">'+formatDur(Math.min.apply(null,tiemposTotales))+'</span></div>';
+      html+='<div class="reporte-row"><span class="reporte-label">Más lento</span><span class="reporte-val" style="color:var(--danger)">'+formatDur(Math.max.apply(null,tiemposTotales))+'</span></div>';
+      html+='</div>';
+    }
+
+    if(topLentas.length>0){
+      html+='<div class="reporte-section"><div class="reporte-title">Partidas más Lentas (Promedio)</div>';
+      topLentas.forEach(function(p,i){
+        html+='<div class="reporte-row"><div><div class="reporte-label">'+(i+1)+'. '+p.name+'</div><div style="font-size:10px;color:var(--text2)">'+p.count+' muestras</div></div><span class="reporte-val" style="color:var(--warning)">'+formatDur(p.promedio)+'</span></div>';
+      });
+      html+='</div>';
+    }
+
     c.innerHTML=html;
   });
   activeListeners.push(unsub);
 }
 
+// ── HISTORIAL ─────────────────────────────────────────────────────────────────
 function renderHistorial(){
-  db.collection("historial").orderBy("timestamp","desc").limit(80).get().then(function(snap){
+  db.collection("historial").orderBy("timestamp","desc").limit(100).get().then(function(snap){
     var c=document.getElementById("main-content");
     var items=snap.docs.map(function(d){return d.data();});
-    if(items.length===0){c.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Sin historial</div></div>';return;}
-    var map={ejecutado:"Marcó ejecutado",aprobado_qc1:"Aprobó QC1",aprobado_qc2:"Aprobó QC2",aprobado_fto:"Aprobó FTO",observacion:"Registró observación"};
-    var html='<div class="timeline">';
+    if(items.length===0){c.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Sin historial aún</div></div>';return;}
+    var html='<div style="padding-left:16px;border-left:2px solid var(--border)">';
     items.forEach(function(item){
-      var color=item.accion==="observacion"?"rejected":item.accion.startsWith("aprobado")?"done":"pending";
-      html+='<div class="timeline-item"><div class="timeline-dot '+color+'"></div>';
+      var esRechazo=item.accion==="rechazo";
+      var esEntrega=item.nuevoEstado==="entregado";
+      var color=esRechazo?"var(--danger)":esEntrega?"var(--success)":"var(--warning)";
+      html+='<div style="position:relative;padding:0 0 14px 16px">';
+      html+='<div style="position:absolute;left:-21px;top:3px;width:10px;height:10px;border-radius:50%;background:'+color+'"></div>';
       html+='<div style="font-size:11px;font-weight:700;color:var(--text2)">'+(item.usuario||"")+'</div>';
-      html+='<div style="font-size:12px;margin-top:2px">'+(map[item.accion]||item.accion)+' — <span style="font-family:monospace;font-size:11px">'+item.partida+'</span></div>';
+      var accionStr=esRechazo?"⛔ Rechazó":esEntrega?"🏁 Entregó":"✅ Avanzó";
+      html+='<div style="font-size:12px;margin-top:2px">'+accionStr;
+      if(item.partida&&item.partida!=="—")html+=' <span style="font-family:monospace;font-size:10px">'+item.partida+'</span>';
+      if(item.nuevoEstado)html+=' → <span class="badge badge-'+item.nuevoEstado+'">'+(ESTADO_P_LABELS[item.nuevoEstado]||ESTADO_M_LABELS[item.nuevoEstado]||item.nuevoEstado)+'</span>';
+      html+='</div>';
       if(item.observacion)html+='<div style="font-size:11px;color:var(--danger);margin-top:2px">⚠ '+item.observacion+'</div>';
-      html+='<div style="font-size:10px;color:var(--text2);margin-top:2px">'+item.moduloId+'</div></div>';
+      html+='<div style="font-size:10px;color:var(--text2);margin-top:2px">'+(item.modulo||item.moduloId||"")+'</div></div>';
     });
     html+='</div>';
     c.innerHTML=html;
   });
 }
 
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
 function renderAdmin(){
   var c=document.getElementById("main-content");
-  c.innerHTML='<div class="card"><div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Agregar Módulo</div>'
+  c.innerHTML='<div class="card"><div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Agregar Módulo a Planta</div>'
     +'<div style="display:flex;gap:8px;margin-bottom:10px"><input type="text" id="mod-nombre" placeholder="Ej: E01-P1-D1" style="flex:1"><select id="mod-tipo"><option value="seco">M1 Seco</option><option value="humedo">M2 Húmedo</option></select></div>'
     +'<div style="display:flex;gap:8px;margin-bottom:12px"><input type="text" id="mod-edificio" placeholder="Edificio (E01)" style="flex:1"><input type="text" id="mod-depto" placeholder="Depto (P1-D1)" style="flex:1"></div>'
-    +'<button class="btn" onclick="addModulo()">Agregar</button></div>'
-    +'<div class="card" style="margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Crear Usuario</div>'
+    +'<button class="btn" onclick="addModulo()">Agregar Módulo</button></div>'
+    +'<div class="card" style="margin-top:12px"><div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Crear Usuario</div>'
     +'<div style="margin-bottom:10px"><input type="text" id="u-nombre" placeholder="Nombre completo" style="width:100%"></div>'
     +'<div style="margin-bottom:10px"><input type="email" id="u-email" placeholder="correo@mail.com" style="width:100%"></div>'
     +'<div style="margin-bottom:10px"><input type="password" id="u-pass" placeholder="contraseña (mín. 6 caracteres)" style="width:100%"></div>'
@@ -618,11 +971,16 @@ function addModulo(){
   var tipo=document.getElementById("mod-tipo").value;
   var edificio=document.getElementById("mod-edificio").value.trim();
   var depto=document.getElementById("mod-depto").value.trim();
-  if(!nombre){alert("Escribe el nombre");return;}
-  var partidas=tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO;
-  var estados={};partidas.forEach(function(p){estados[p.code]="pendiente";});
-  db.collection("modulos").add({nombre:nombre,tipo:tipo,edificio:edificio,depto:depto,activo:true,estados:estados,tiempos:{},observaciones:{},creado_at:firebase.firestore.FieldValue.serverTimestamp(),orden:Date.now()}).then(function(){
-    alert("Módulo "+nombre+" agregado");
+  if(!nombre){alert("Escribe el nombre del módulo");return;}
+  var partidas=(tipo==="seco"?PARTIDAS_SECO:PARTIDAS_HUMEDO).filter(function(p){return!p.sub;});
+  var estados={};
+  partidas.forEach(function(p){estados[p.code]="en_ejecucion";});
+  db.collection("modulos").add({
+    nombre:nombre,tipo:tipo,edificio:edificio,depto:depto,activo:true,
+    estados:estados,tiempos:{},observaciones:{},estadoModulo:"fabricacion",
+    creado_at:firebase.firestore.FieldValue.serverTimestamp(),orden:Date.now()
+  }).then(function(){
+    alert("Módulo "+nombre+" agregado correctamente");
     document.getElementById("mod-nombre").value="";
   });
 }
@@ -638,9 +996,9 @@ function addUser(){
   auth.createUserWithEmailAndPassword(email,pass).then(function(cred){
     return db.collection("users").doc(cred.user.uid).set({nombre:nombre,email:email,rol:rol});
   }).then(function(){
-    err.style.color="var(--success)";err.textContent="Usuario creado";
+    err.style.color="var(--success)";err.textContent="Usuario "+nombre+" creado exitosamente";
     document.getElementById("u-nombre").value="";document.getElementById("u-email").value="";document.getElementById("u-pass").value="";
-  }).catch(function(e){err.textContent=e.message;});
+  }).catch(function(e){err.style.color="var(--danger)";err.textContent=e.message;});
 }
 </script>
 </body>
