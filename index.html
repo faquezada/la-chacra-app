@@ -443,28 +443,53 @@ function openModulo(moduloId){
   });
 }
 
-function marcarEjecutado(moduloId,code){
-  var update={};
-  update["estados."+code]="ejecutado";
-  update["tiempos."+code+".ejecutado_at"]=firebase.firestore.FieldValue.serverTimestamp();
-  update["tiempos."+code+".ejecutado_por"]=userProfile.nombre||currentUser.email;
-  db.collection("modulos").doc(moduloId).update(update).then(function(){
-    db.collection("historial").add({moduloId:moduloId,partida:code,accion:"ejecutado",usuario:userProfile.nombre||currentUser.email,rol:userProfile.rol,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-    closeModal();setTimeout(function(){openModulo(moduloId);},400);
+function actualizarModulo(moduloId, code, nuevoEstado, extra, accion, obsText){
+  db.collection("modulos").doc(moduloId).get().then(function(snap){
+    if(!snap.exists)return;
+    var data=snap.data();
+    var estados=data.estados||{};
+    var tiempos=data.tiempos||{};
+    var observaciones=data.observaciones||{};
+    var now=new Date().toISOString();
+    var usuario=userProfile.nombre||currentUser.email;
+
+    estados[code]=nuevoEstado;
+    if(!tiempos[code])tiempos[code]={};
+
+    if(accion==="ejecutado"){
+      tiempos[code].ejecutado_at=now;
+      tiempos[code].ejecutado_por=usuario;
+    }else if(accion.startsWith("aprobado_")){
+      var nivel=accion.replace("aprobado_","");
+      tiempos[code][nivel+"_at"]=now;
+      tiempos[code][nivel+"_por"]=usuario;
+      if(nuevoEstado==="aprobado")tiempos[code].aprobado_at=now;
+    }else if(accion==="observacion"){
+      observaciones[code]=obsText||"";
+      tiempos[code].obs_at=now;
+    }
+
+    db.collection("modulos").doc(moduloId).update({
+      estados:estados, tiempos:tiempos, observaciones:observaciones
+    }).then(function(){
+      db.collection("historial").add({
+        moduloId:moduloId, partida:code, accion:accion,
+        observacion:obsText||"", usuario:usuario, rol:userProfile.rol,
+        timestamp:firebase.firestore.FieldValue.serverTimestamp()
+      });
+      closeModal();
+      setTimeout(function(){openModulo(moduloId);},400);
+    }).catch(function(e){console.log("Error guardando:",e.message);});
   });
+}
+
+function marcarEjecutado(moduloId,code){
+  actualizarModulo(moduloId,code,"ejecutado",null,"ejecutado","");
 }
 
 function aprobar(moduloId,code,nivel){
   var siguiente=nextEstado(nivel);
-  var update={};
-  update["estados."+code]=siguiente;
-  update["tiempos."+code+"."+nivel+"_at"]=firebase.firestore.FieldValue.serverTimestamp();
-  update["tiempos."+code+"."+nivel+"_por"]=userProfile.nombre||currentUser.email;
-  if(siguiente==="aprobado")update["tiempos."+code+".aprobado_at"]=firebase.firestore.FieldValue.serverTimestamp();
-  db.collection("modulos").doc(moduloId).update(update).then(function(){
-    db.collection("historial").add({moduloId:moduloId,partida:code,accion:"aprobado_"+nivel,usuario:userProfile.nombre||currentUser.email,rol:userProfile.rol,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-    closeModal();setTimeout(function(){openModulo(moduloId);},400);
-  });
+  actualizarModulo(moduloId,code,siguiente,null,"aprobado_"+nivel,"");
 }
 
 function rechazar(moduloId,code){
@@ -474,14 +499,7 @@ function rechazar(moduloId,code){
 function confirmarRechazo(moduloId,code){
   var obs=document.getElementById("obs-text").value.trim();
   if(!obs){alert("Escribe la observación");return;}
-  var update={};
-  update["estados."+code]="observacion";
-  update["observaciones."+code]=obs;
-  update["tiempos."+code+".obs_at"]=firebase.firestore.FieldValue.serverTimestamp();
-  db.collection("modulos").doc(moduloId).update(update).then(function(){
-    db.collection("historial").add({moduloId:moduloId,partida:code,accion:"observacion",observacion:obs,usuario:userProfile.nombre||currentUser.email,rol:userProfile.rol,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-    closeModal();
-  });
+  actualizarModulo(moduloId,code,"observacion",null,"observacion",obs);
 }
 
 function renderRevisar(){
